@@ -1,0 +1,52 @@
+select g.Name, count(SingerId) from Genre g
+	join GenreSinger gs on g.Id = gs.GenreId
+	group by g.Name;
+
+select a.Name, count(t.Id) from Album a
+	join Track t on a.Id = t.AlbumId
+	where Year between 2019 and 2020
+	group by a.Name;
+
+select a.Name, avg(t.Duration) from Album a
+	join Track t on a.Id = t.AlbumId
+	group by a.Name;
+
+select s.Name from Singer s
+	join SingerAlbum sa on s.Id = sa.SingerId
+	join Album a on sa.AlbumId = a.Id
+	where Year != 2020;
+
+select c.Name from Collection c
+	join CollectionTrack ct on c.Id = ct.CollectionId
+	join Track t on t.Id = ct.TrackId
+	join Album a on a.Id = t.AlbumId
+	join SingerAlbum sa on sa.AlbumId = a.Id
+	join Singer s on s.Id = sa.SingerId
+	where s.Name = 'Against The Current'
+	group by c.Name;
+
+select a.Name from Album a
+	join SingerAlbum sa on sa.AlbumId = a.Id
+	join Singer s on s.Id = sa.SingerId
+	join GenreSinger gs on gs.SingerId = s.Id
+	join Genre g on g.Id = gs.GenreId
+	group by a.Name
+	having count(s.Id) > 1;
+
+select t.Name from Track t
+	left join CollectionTrack ct on t.Id = ct.TrackId
+	left join Collection c on c.Id = ct.CollectionId
+	where c.Name is null;
+
+select s.Name from Singer s
+	join SingerAlbum sa on s.Id = sa.SingerId
+	join Album a on sa.AlbumId = a.Id
+	join Track t on t.AlbumId = a.Id
+	where t.Duration = (
+		select min(t.Duration) from Track t);
+
+select a.Name from Album a
+	join Track t on a.Id = t.AlbumId
+	group by a.Name
+	order by count(t.Id)
+	limit 1;
